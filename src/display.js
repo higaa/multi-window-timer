@@ -2,8 +2,8 @@ const timerDisplay = document.getElementById('timer');
 const fullscreenButton = document.getElementById('fullscreenButton');
 
 let endTime;
-
 let counting = false;
+
 
 function updateDisplay() {
     if (!counting) {
@@ -26,7 +26,7 @@ function updateDisplay() {
 
     timerDisplay.innerHTML = timeString;
 
-    if (remainingSeconds >= 60) {
+    if (remainingSeconds > 60) {
         document.body.style.backgroundColor = '#fff'; // 白色
         document.body.style.color = '#000'; // 黒色
     } else if (remainingSeconds > 0) {
@@ -49,29 +49,33 @@ function resetDisplay() {
     document.body.style.color = '#000'; // 黒色
 }
 
-window.addEventListener('storage', (event) => {
-    if (event.key === 'endTime') {
-        endTime = parseInt(event.newValue, 10);
+const bcChannel = new BroadcastChannel('multi-window-timer');
+
+bcChannel.onmessage = (event) => {
+    console.log('displayWorker.js received:', event.data);
+    if (event.data.type === 'updateEndTime') {
+        endTime = event.data.endTime;
         if (endTime === 0) {
             counting = false;
             resetDisplay();
-
         } else {
             counting = true;
             updateDisplay();
         }
     }
-});
+};
 
 // 初期表示をlocalStorageから取得
 endTime = parseInt(localStorage.getItem('endTime'), 10);
-if (!isNaN(endTime)) {
-    if (endTime === 0) {
-        resetDisplay();
-    } else {
-        counting = true;
-        updateDisplay();
-    }
+if (isNaN(endTime)) {
+    endTime = 0;
+}
+if (endTime === 0) {
+    counting = false;
+    resetDisplay();
+} else {
+    counting = true;
+    updateDisplay();
 }
 
 // 全画面表示に切り替える関数
