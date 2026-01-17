@@ -1,8 +1,10 @@
 const timerDisplay = document.getElementById('timer');
 const fullscreenButton = document.getElementById('fullscreenButton');
+const exitFullscreenButton = document.getElementById('exitFullscreenButton');
 
 let endTime;
 let counting = false;
+let hideButtonTimeout = null;
 
 
 function updateDisplay() {
@@ -110,3 +112,55 @@ document.addEventListener('msfullscreenchange', checkFullScreen);
 fullscreenButton.addEventListener('click', () => {
     requestFullScreen(document.documentElement);
 });
+
+// 全画面表示を解除する関数
+function exitFullScreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) { // Firefox
+        document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) { // IE/Edge
+        document.msExitFullscreen();
+    }
+}
+
+// ボタンをクリックして全画面表示を解除
+exitFullscreenButton.addEventListener('click', () => {
+    exitFullScreen();
+});
+
+// マウスの動きを検知してボタンを表示
+function showButton() {
+    const isFullscreen = document.fullscreenElement || document.mozFullScreenElement || 
+        document.webkitFullscreenElement || document.msFullscreenElement;
+    
+    // 既存のタイマーをクリア
+    if (hideButtonTimeout) {
+        clearTimeout(hideButtonTimeout);
+    }
+    
+    if (isFullscreen) {
+        // 全画面表示中は解除ボタンを表示
+        exitFullscreenButton.classList.add('visible');
+        fullscreenButton.classList.remove('visible');
+        
+        // 3秒後に解除ボタンを非表示
+        hideButtonTimeout = setTimeout(() => {
+            exitFullscreenButton.classList.remove('visible');
+        }, 3000);
+    } else {
+        // 通常時は全画面表示ボタンを表示
+        fullscreenButton.classList.add('visible');
+        exitFullscreenButton.classList.remove('visible');
+        
+        // 3秒後に全画面表示ボタンを非表示
+        hideButtonTimeout = setTimeout(() => {
+            fullscreenButton.classList.remove('visible');
+        }, 3000);
+    }
+}
+
+// マウス移動イベントを監視
+document.addEventListener('mousemove', showButton);
