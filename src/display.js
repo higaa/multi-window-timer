@@ -103,7 +103,13 @@ function isFullscreen() {
            document.webkitFullscreenElement || document.msFullscreenElement;
 }
 
-
+function updateControlsDisplay() {
+    if (isFullscreen()) {
+        fullscreenControlsContainer.style.display = 'flex';
+    } else {
+        fullscreenControlsContainer.style.display = 'none';
+    }
+}
 
 // ========================================
 // フォントサイズ調整
@@ -134,14 +140,6 @@ windowFullscreenButton.addEventListener('click', () => requestFullScreen(documen
 fullscreenFontDecreaseButton.addEventListener('click', () => changeFontSize(-1));
 fullscreenFontIncreaseButton.addEventListener('click', () => changeFontSize(1));
 fullscreenExitButton.addEventListener('click', exitFullScreen);
-
-function updateControlsDisplay() {
-    if (isFullscreen()) {
-        fullscreenControlsContainer.style.display = 'flex';
-    } else {
-        fullscreenControlsContainer.style.display = 'none';
-    }
-}
 
 document.addEventListener('fullscreenchange', updateControlsDisplay);
 document.addEventListener('mozfullscreenchange', updateControlsDisplay);
