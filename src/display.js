@@ -20,6 +20,7 @@ const fullscreenExitButton = document.getElementById('fullscreenExitButton');
 // ========================================
 let endTime = 0;
 let counting = false;
+let hideButtonTimeout = null;
 let currentFontSize = 10; // vw単位
 
 // ========================================
@@ -112,6 +113,22 @@ function updateControlsDisplay() {
 }
 
 // ========================================
+// ボタン表示制御
+// ========================================
+function showButton() {
+    if (hideButtonTimeout) {
+        clearTimeout(hideButtonTimeout);
+    }
+
+        windowControls.classList.add('visible');
+        fullscreenControlsContainer.classList.add('visible');
+
+        hideButtonTimeout = setTimeout(() => {
+            windowControls.classList.remove('visible');
+            fullscreenControlsContainer.classList.remove('visible');
+        }, 3000);
+}
+// ========================================
 // フォントサイズ調整
 // ========================================
 function changeFontSize(delta) {
@@ -145,6 +162,8 @@ document.addEventListener('fullscreenchange', updateControlsDisplay);
 document.addEventListener('mozfullscreenchange', updateControlsDisplay);
 document.addEventListener('webkitfullscreenchange', updateControlsDisplay);
 document.addEventListener('msfullscreenchange', updateControlsDisplay);
+
+document.addEventListener('mousemove', showButton);
 
 // ========================================
 // BroadcastChannel通信
