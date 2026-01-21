@@ -30,7 +30,7 @@ function updateDisplay() {
     if (!counting) return;
 
     const currentTime = Date.now();
-    const remainingSeconds = Math.ceil((endTime - currentTime) / 1000);
+    let remainingSeconds = Math.ceil((endTime - currentTime) / 1000);
 
     const timeString = (() => {
         if (remainingSeconds > 60) {
@@ -47,10 +47,10 @@ function updateDisplay() {
     timerDisplay.innerHTML = timeString;
     updateBackgroundColor(remainingSeconds);
 
-    const delay = (endTime - remainingSeconds * 1000) - currentTime;
-    if (delay > 0) {
-        setTimeout(updateDisplay, delay);
+    while ((endTime - remainingSeconds * 1000) - currentTime <= 0) {
+        --remainingSeconds;
     }
+    setTimeout(updateDisplay, (endTime - remainingSeconds * 1000) - currentTime);
 }
 
 function updateBackgroundColor(remainingSeconds) {
