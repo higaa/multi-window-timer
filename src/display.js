@@ -104,41 +104,7 @@ function isFullscreen() {
            document.webkitFullscreenElement || document.msFullscreenElement;
 }
 
-// ========================================
-// ボタン表示制御
-// ========================================
-function showButton() {
-    if (hideButtonTimeout) {
-        clearTimeout(hideButtonTimeout);
-    }
 
-    if (isFullscreen()) {
-        // 全画面表示中
-        windowControls.classList.remove('visible');
-        fullscreenControlsContainer.style.display = 'flex';
-        fullscreenFontDecreaseButton.classList.add('visible');
-        fullscreenFontIncreaseButton.classList.add('visible');
-        fullscreenExitButton.classList.add('visible');
-
-        hideButtonTimeout = setTimeout(() => {
-            fullscreenFontDecreaseButton.classList.remove('visible');
-            fullscreenFontIncreaseButton.classList.remove('visible');
-            fullscreenExitButton.classList.remove('visible');
-        }, 3000);
-    } else {
-        // ウィンドウ表示中
-        fullscreenControlsContainer.style.display = 'none';
-        windowFontDecreaseButton.classList.add('visible');
-        windowFontIncreaseButton.classList.add('visible');
-        windowFullscreenButton.classList.add('visible');
-
-        hideButtonTimeout = setTimeout(() => {
-            windowFontDecreaseButton.classList.remove('visible');
-            windowFontIncreaseButton.classList.remove('visible');
-            windowFullscreenButton.classList.remove('visible');
-        }, 3000);
-    }
-}
 
 // ========================================
 // フォントサイズ調整
@@ -170,12 +136,18 @@ fullscreenFontDecreaseButton.addEventListener('click', () => changeFontSize(-1))
 fullscreenFontIncreaseButton.addEventListener('click', () => changeFontSize(1));
 fullscreenExitButton.addEventListener('click', exitFullScreen);
 
-document.addEventListener('mousemove', showButton);
+function updateControlsDisplay() {
+    if (isFullscreen()) {
+        fullscreenControlsContainer.style.display = 'flex';
+    } else {
+        fullscreenControlsContainer.style.display = 'none';
+    }
+}
 
-document.addEventListener('fullscreenchange', () => {});
-document.addEventListener('mozfullscreenchange', () => {});
-document.addEventListener('webkitfullscreenchange', () => {});
-document.addEventListener('msfullscreenchange', () => {});
+document.addEventListener('fullscreenchange', updateControlsDisplay);
+document.addEventListener('mozfullscreenchange', updateControlsDisplay);
+document.addEventListener('webkitfullscreenchange', updateControlsDisplay);
+document.addEventListener('msfullscreenchange', updateControlsDisplay);
 
 // ========================================
 // BroadcastChannel通信
