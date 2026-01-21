@@ -20,7 +20,6 @@ const fullscreenExitButton = document.getElementById('fullscreenExitButton');
 // ========================================
 let endTime = 0;
 let counting = false;
-let hideButtonTimeout = null;
 let currentFontSize = 10; // vw単位
 
 // ========================================
